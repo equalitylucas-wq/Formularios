@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formulários · Quality Equipamentos</title>
+<style>
+  :root{
+    --navy:#1F3A5F;
+    --navy-dark:#152A45;
+    --teal:#2C7A6B;
+    --teal-dark:#20604F;
+    --bg:#F2F4F7;
+    --card:#FFFFFF;
+    --border:#E1E5EB;
+    --text:#232830;
+    --text-muted:#6B7280;
+    --danger:#A8452F;
+    --danger-bg:#FBEDE9;
+    --radius:10px;
+    --radius-sm:6px;
+    --shadow:0 1px 3px rgba(20,30,50,0.08), 0 1px 2px rgba(20,30,50,0.06);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);}
+  header.topbar{background:var(--navy);color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;box-shadow:var(--shadow);}
+  header.topbar .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px;letter-spacing:.2px;}
+  header.topbar .brand .mark{width:28px;height:28px;border-radius:6px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;}
+  header.topbar .sub{font-size:12px;color:#B9C6D6;font-weight:400;}
+  nav.tabs{display:flex;gap:4px;background:var(--card);border-bottom:1px solid var(--border);padding:0 16px;position:sticky;top:53px;z-index:19;overflow-x:auto;}
+  nav.tabs button{border:none;background:transparent;padding:12px 14px;font-size:13.5px;font-weight:600;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;}
+  nav.tabs button.active{color:var(--navy);border-bottom-color:var(--teal);}
+  main{max-width:960px;margin:0 auto;padding:20px 16px 80px;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:14px;}
+  .row{display:flex;gap:12px;flex-wrap:wrap;}
+  label.field-label{display:block;font-size:12.5px;font-weight:600;color:var(--text-muted);margin-bottom:5px;}
+  input[type=text],input[type=number],input[type=date],textarea,select{
+    width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:inherit;color:var(--text);background:#fff;
+  }
+  textarea{resize:vertical;min-height:60px;}
+  input:focus,textarea:focus,select:focus,button:focus-visible{outline:2px solid var(--teal);outline-offset:1px;}
+  .btn{border:none;border-radius:var(--radius-sm);padding:9px 15px;font-size:13.5px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
+  .btn-primary{background:var(--navy);color:#fff;}
+  .btn-primary:hover{background:var(--navy-dark);}
+  .btn-teal{background:var(--teal);color:#fff;}
+  .btn-teal:hover{background:var(--teal-dark);}
+  .btn-ghost{background:transparent;color:var(--navy);border:1px solid var(--border);}
+  .btn-ghost:hover{background:#F5F7FA;}
+  .btn-danger{background:var(--danger-bg);color:var(--danger);}
+  .btn-danger:hover{background:#F5DAD2;}
+  .btn-sm{padding:6px 10px;font-size:12.5px;}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+  .palette{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;}
+  .palette button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border:1px solid var(--border);background:#fff;border-radius:var(--radius-sm);cursor:pointer;font-size:12px;color:var(--text);font-weight:600;}
+  .palette button:hover{border-color:var(--teal);color:var(--teal-dark);}
+  .palette button .badge{width:30px;height:30px;border-radius:7px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;}
+  .field-card{border:1px solid var(--border);border-radius:var(--radius-sm);background:#fbfbfc;padding:12px;margin-bottom:10px;cursor:grab;}
+  .field-card.dragging{opacity:.4;}
+  .field-card-head{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+  .field-card-head .handle{color:#9AA3AF;font-size:15px;cursor:grab;user-select:none;}
+  .field-card-head .type-badge{font-size:11px;font-weight:700;background:var(--navy);color:#fff;padding:3px 8px;border-radius:20px;letter-spacing:.3px;}
+  .field-card-head .spacer{flex:1;}
+  .toggle{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--text-muted);cursor:pointer;user-select:none;}
+  .toggle input{width:15px;height:15px;}
+  .opt-row{display:flex;gap:6px;margin-bottom:6px;align-items:center;}
+  .opt-row input{flex:1;}
+  .icon-btn{border:none;background:transparent;color:var(--text-muted);cursor:pointer;font-size:15px;padding:4px 6px;border-radius:5px;}
+  .icon-btn:hover{background:#EEF1F5;color:var(--danger);}
+  .status-pill{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.2px;}
+  .status-pill.ativo{background:#E1F0EA;color:var(--teal-dark);}
+  .status-pill.inativo{background:#EDEFF2;color:var(--text-muted);}
+  .list-item{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:10px;background:#fff;}
+  .list-item .meta{flex:1;min-width:0;}
+  .list-item .meta .title{font-weight:700;font-size:14.5px;margin-bottom:2px;}
+  .list-item .meta .desc{font-size:12.5px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .list-item .actions{display:flex;gap:6px;flex-wrap:wrap;}
+  .empty{text-align:center;padding:50px 20px;color:var(--text-muted);}
+  .empty .big{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px;}
+  table.resp-table{width:100%;border-collapse:collapse;font-size:13px;}
+  table.resp-table th,table.resp-table td{padding:9px 10px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top;}
+  table.resp-table th{background:#F7F8FA;font-weight:700;color:var(--text-muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.3px;position:sticky;top:0;}
+  .table-wrap{overflow-x:auto;}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--navy-dark);color:#fff;padding:11px 18px;border-radius:8px;font-size:13.5px;box-shadow:var(--shadow);z-index:100;opacity:0;pointer-events:none;transition:opacity .2s, transform .2s;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(-4px);}
+  .modal-bg{position:fixed;inset:0;background:rgba(20,30,50,.45);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px;}
+  .modal{background:#fff;border-radius:var(--radius);padding:20px;max-width:420px;width:100%;box-shadow:0 10px 30px rgba(0,0,0,.2);}
+  .modal h3{margin:0 0 8px;font-size:16px;}
+  .modal p{font-size:13.5px;color:var(--text-muted);margin:0 0 16px;}
+  .modal .actions{display:flex;gap:8px;justify-content:flex-end;}
+  .link-box{display:flex;gap:6px;margin-top:10px;}
+  .link-box input{background:#F7F8FA;font-family:monospace;font-size:12px;}
+  /* --- Tela de preenchimento (pública / mobile) --- */
+  #fillView{max-width:600px;}
+  #fillView .card{padding:22px 18px;}
+  #fillView .form-title{font-size:19px;font-weight:700;margin:0 0 4px;color:var(--navy);}
+  #fillView .form-desc{font-size:13.5px;color:var(--text-muted);margin:0 0 20px;}
+  .q-block{margin-bottom:20px;}
+  .q-block label.qlabel{display:block;font-size:14.5px;font-weight:600;margin-bottom:8px;}
+  .q-block label.qlabel .req{color:var(--danger);margin-left:3px;}
+  .choice-row{display:flex;align-items:center;gap:9px;padding:9px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;}
+  .choice-row input{width:16px;height:16px;flex:none;}
+  .choice-row label{font-size:14px;flex:1;}
+  .scale-row{display:flex;gap:6px;flex-wrap:wrap;}
+  .scale-opt{flex:1;min-width:38px;text-align:center;padding:10px 0;border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;font-weight:600;font-size:13px;}
+  .scale-opt.selected{background:var(--teal);color:#fff;border-color:var(--teal);}
+  .scale-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-top:4px;}
+  #fillView .btn-primary{width:100%;padding:13px;font-size:14.5px;}
+  .success-box{text-align:center;padding:60px 20px;}
+  .success-box .check{width:56px;height:56px;border-radius:50%;background:var(--teal);color:#fff;font-size:26px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;}
+  .banner{background:#FFF8E8;border:1px solid #F0DDA8;color:#7A5E15;padding:10px 14px;border-radius:var(--radius-sm);font-size:12.5px;margin-bottom:14px;}
+  @media(max-width:600px){
+    main{padding:14px 10px 70px;}
+    .list-item{flex-wrap:wrap;}
+  }
+  [hidden]{display:none!important;}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand"><div class="mark">FQ</div> Formulários <span class="sub">&nbsp;Quality Equipamentos</span></div>
+  <button class="btn btn-ghost btn-sm" id="btnConfig" style="background:transparent;color:#fff;border-color:rgba(255,255,255,.35);">Conexão</button>
+</header>
+
+<nav class="tabs" id="mainTabs">
+  <button data-tab="builder" class="active">Construtor</button>
+  <button data-tab="list">Meus formulários</button>
+</nav>
+
+<div style="max-width:960px;margin:0 auto;padding:14px 16px 0;">
+  <div class="banner" id="hostWarning" hidden>
+    <strong>Arquivo aberto localmente.</strong> Links de formulário só funcionam em outros celulares/computadores depois que você hospedar este arquivo (ex.: GitHub Pages, do mesmo jeito que fez com o dashboard de contas a pagar). Abra a versão hospedada antes de gerar e compartilhar links.
+  </div>
+</div>
+
+<!-- ===================== CONSTRUTOR ===================== -->
+<main id="viewBuilder">
+  <div class="card">
+    <div class="row">
+      <div style="flex:2;min-width:220px;">
+        <label class="field-label">Título do formulário</label>
+        <input type="text" id="formTitulo" placeholder="Ex.: Solicitação de EPI">
+      </div>
+      <div style="flex:1;min-width:160px;">
+        <label class="field-label">Categoria</label>
+        <select id="formCategoria">
+          <option value="Treinamento">Treinamento</option>
+          <option value="Solicitação">Solicitação</option>
+          <option value="Outro">Outro</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin-top:10px;">
+      <label class="field-label">Descrição / instruções (aparece para quem responde)</label>
+      <textarea id="formDescricao" placeholder="Ex.: Preencha os itens de EPI necessários para o seu setor."></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <label class="field-label" style="margin-bottom:10px;">Adicionar campo</label>
+    <div class="palette" id="palette"></div>
+  </div>
+
+  <div id="fieldsContainer"></div>
+
+  <div class="card" style="display:flex;justify-content:space-between;align-items:center;">
+    <span style="font-size:12.5px;color:var(--text-muted);" id="fieldCountLabel">Nenhum campo adicionado</span>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-ghost" id="btnNovo">Novo formulário</button>
+      <button class="btn btn-teal" id="btnSalvar">Salvar formulário</button>
+    </div>
+  </div>
+</main>
+
+<!-- ===================== LISTA ===================== -->
+<main id="viewList" hidden>
+  <div id="listContainer"></div>
+</main>
+
+<!-- ===================== RESPOSTAS ===================== -->
+<main id="viewResponses" hidden>
+  <div class="card" style="display:flex;justify-content:space-between;align-items:center;">
+    <div>
+      <div style="font-weight:700;font-size:15px;" id="respFormTitle">—</div>
+      <div style="font-size:12.5px;color:var(--text-muted);" id="respCount">—</div>
+    </div>
+    <button class="btn btn-ghost btn-sm" id="btnVoltarLista">← Voltar</button>
+  </div>
+  <div class="card table-wrap"><div id="respTableWrap"></div></div>
+</main>
+
+<!-- ===================== PREENCHIMENTO (PÚBLICO) ===================== -->
+<main id="fillView" hidden>
+  <div class="card" id="fillCard"></div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= CONFIGURAÇÃO ================= */
+/* Cole aqui a URL do seu Web App do Apps Script (veja instruções enviadas junto com este arquivo) */
+const CONFIG = {
+  API_URL: localStorage.getItem('fq_api_url') || 'COLE_AQUI_A_URL_DO_APPS_SCRIPT'
+};
+
+/* ================= TIPOS DE CAMPO ================= */
+const FIELD_TYPES = [
+  {tipo:'texto_curto', nome:'Texto curto', sigla:'Aa'},
+  {tipo:'texto_longo', nome:'Texto longo', sigla:'¶'},
+  {tipo:'numero', nome:'Número', sigla:'#'},
+  {tipo:'data', nome:'Data', sigla:'31'},
+  {tipo:'radio', nome:'Múltipla escolha', sigla:'◉'},
+  {tipo:'checkbox', nome:'Caixas de seleção', sigla:'☑'},
+  {tipo:'select', nome:'Lista suspensa', sigla:'▾'},
+  {tipo:'escala', nome:'Escala / nota', sigla:'★'},
+];
+const COM_OPCOES = ['radio','checkbox','select'];
+
+/* ================= ESTADO ================= */
+let currentForm = novoFormularioVazio();
+let formsCache = [];
+let dragIndex = null;
+
+function novoFormularioVazio(){
+  return {id:null, titulo:'', descricao:'', categoria:'Treinamento', ativo:true, campos:[], criadoEm:null};
+}
+function uuid(){
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{
+    const r = Math.random()*16|0, v = c==='x'?r:(r&0x3|0x8);
+    return v.toString(16);
+  });
+}
+
+/* ================= API ================= */
+async function apiGet(params){
+  const url = CONFIG.API_URL + '?' + new URLSearchParams(params).toString();
+  const res = await fetch(url);
+  return res.json();
+}
+async function apiPost(body){
+  const res = await fetch(CONFIG.API_URL, {
+    method:'POST',
+    headers:{'Content-Type':'text/plain;charset=utf-8'}, // evita preflight CORS no Apps Script
+    body: JSON.stringify(body)
+  });
+  return res.json();
+}
+
+/* ================= TOAST ================= */
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+/* ================= NAVEGAÇÃO ================= */
+document.getElementById('mainTabs').addEventListener('click', e=>{
+  const btn = e.target.closest('button[data-tab]');
+  if(!btn) return;
+  document.querySelectorAll('#mainTabs button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('viewBuilder').hidden = btn.dataset.tab !== 'builder';
+  document.getElementById('viewList').hidden = btn.dataset.tab !== 'list';
+  document.getElementById('viewResponses').hidden = true;
+  if(btn.dataset.tab === 'list') carregarLista();
+});
+
+document.getElementById('btnConfig').addEventListener('click', ()=>{
+  const atual = CONFIG.API_URL === 'COLE_AQUI_A_URL_DO_APPS_SCRIPT' ? '' : CONFIG.API_URL;
+  const url = prompt('Cole a URL do Web App do Apps Script:', atual);
+  if(url){
+    CONFIG.API_URL = url.trim();
+    localStorage.setItem('fq_api_url', CONFIG.API_URL);
+    toast('Conexão salva neste navegador.');
+  }
+});
+
+/* ================= PALETA DE CAMPOS ================= */
+function renderPalette(){
+  const el = document.getElementById('palette');
+  el.innerHTML = FIELD_TYPES.map(ft => `
+    <button type="button" data-tipo="${ft.tipo}">
+      <span class="badge">${ft.sigla}</span>${ft.nome}
+    </button>`).join('');
+  el.addEventListener('click', e=>{
+    const btn = e.target.closest('button[data-tipo]');
+    if(!btn) return;
+    addField(btn.dataset.tipo);
+  });
+}
+
+function addField(tipo){
+  const campo = {
+    id: uuid(), tipo, label:'', obrigatorio:false,
+    opcoes: COM_OPCOES.includes(tipo) ? ['Opção 1'] : [],
+    escalaMin: tipo==='escala'?1:undefined,
+    escalaMax: tipo==='escala'?5:undefined,
+    escalaLabelMin: tipo==='escala'?'':undefined,
+    escalaLabelMax: tipo==='escala'?'':undefined,
+  };
+  currentForm.campos.push(campo);
+  renderFields();
+}
+
+/* ================= RENDER CAMPOS (BUILDER) ================= */
+function renderFields(){
+  const wrap = document.getElementById('fieldsContainer');
+  wrap.innerHTML = '';
+  currentForm.campos.forEach((campo, idx)=>{
+    wrap.appendChild(buildFieldCard(campo, idx));
+  });
+  const n = currentForm.campos.length;
+  document.getElementById('fieldCountLabel').textContent = n===0 ? 'Nenhum campo adicionado' : (n+(n===1?' campo':' campos')+' no formulário');
+}
+
+function buildFieldCard(campo, idx){
+  const ft = FIELD_TYPES.find(f=>f.tipo===campo.tipo);
+  const div = document.createElement('div');
+  div.className = 'field-card';
+  div.draggable = true;
+  div.dataset.idx = idx;
+
+  div.addEventListener('dragstart', ()=>{ dragIndex = idx; div.classList.add('dragging'); });
+  div.addEventListener('dragend', ()=> div.classList.remove('dragging'));
+  div.addEventListener('dragover', e=> e.preventDefault());
+  div.addEventListener('drop', e=>{
+    e.preventDefault();
+    if(dragIndex===null || dragIndex===idx) return;
+    const [moved] = currentForm.campos.splice(dragIndex,1);
+    currentForm.campos.splice(idx,0,moved);
+    dragIndex = null;
+    renderFields();
+  });
+
+  const head = document.createElement('div');
+  head.className = 'field-card-head';
+  head.innerHTML = `
+    <span class="handle" title="Arraste para reordenar">⠿</span>
+    <span class="type-badge">${ft.nome}</span>
+    <span class="spacer"></span>
+    <label class="toggle"><input type="checkbox" ${campo.obrigatorio?'checked':''} class="chkObrig"> Obrigatório</label>
+    <button type="button" class="icon-btn btnDelCampo" title="Remover campo">✕</button>
+  `;
+  head.querySelector('.chkObrig').addEventListener('change', e=>{ campo.obrigatorio = e.target.checked; });
+  head.querySelector('.btnDelCampo').addEventListener('click', ()=>{
+    currentForm.campos.splice(idx,1);
+    renderFields();
+  });
+  div.appendChild(head);
+
+  const labelInput = document.createElement('input');
+  labelInput.type = 'text';
+  labelInput.placeholder = 'Digite a pergunta / rótulo do campo';
+  labelInput.value = campo.label;
+  labelInput.addEventListener('input', e=> campo.label = e.target.value);
+  div.appendChild(labelInput);
+
+  if(COM_OPCOES.includes(campo.tipo)){
+    const optWrap = document.createElement('div');
+    optWrap.style.marginTop = '10px';
+    function renderOpts(){
+      optWrap.innerHTML = '';
+      campo.opcoes.forEach((op,i)=>{
+        const row = document.createElement('div');
+        row.className = 'opt-row';
+        row.innerHTML = `<input type="text" value="${op.replace(/"/g,'&quot;')}"><button type="button" class="icon-btn">✕</button>`;
+        row.querySelector('input').addEventListener('input', e=> campo.opcoes[i]=e.target.value);
+        row.querySelector('button').addEventListener('click', ()=>{ campo.opcoes.splice(i,1); renderOpts(); });
+        optWrap.appendChild(row);
+      });
+      const addBtn = document.createElement('button');
+      addBtn.type='button'; addBtn.className='btn btn-ghost btn-sm';
+      addBtn.textContent = '+ Adicionar opção';
+      addBtn.addEventListener('click', ()=>{ campo.opcoes.push('Opção '+(campo.opcoes.length+1)); renderOpts(); });
+      optWrap.appendChild(addBtn);
+    }
+    renderOpts();
+    div.appendChild(optWrap);
+  }
+
+  if(campo.tipo === 'escala'){
+    const escWrap = document.createElement('div');
+    escWrap.style.marginTop = '10px';
+    escWrap.innerHTML = `
+      <div class="row">
+        <div style="flex:1;"><label class="field-label">De</label><input type="number" class="escMin" value="${campo.escalaMin}"></div>
+        <div style="flex:1;"><label class="field-label">Até</label><input type="number" class="escMax" value="${campo.escalaMax}"></div>
+        <div style="flex:1;"><label class="field-label">Rótulo do menor valor</label><input type="text" class="escLblMin" value="${campo.escalaLabelMin||''}" placeholder="Ex.: Ruim"></div>
+        <div style="flex:1;"><label class="field-label">Rótulo do maior valor</label><input type="text" class="escLblMax" value="${campo.escalaLabelMax||''}" placeholder="Ex.: Ótimo"></div>
+      </div>`;
+    escWrap.querySelector('.escMin').addEventListener('input', e=> campo.escalaMin = parseInt(e.target.value||'1'));
+    escWrap.querySelector('.escMax').addEventListener('input', e=> campo.escalaMax = parseInt(e.target.value||'5'));
+    escWrap.querySelector('.escLblMin').addEventListener('input', e=> campo.escalaLabelMin = e.target.value);
+    escWrap.querySelector('.escLblMax').addEventListener('input', e=> campo.escalaLabelMax = e.target.value);
+    div.appendChild(escWrap);
+  }
+
+  return div;
+}
+
+/* ================= SALVAR / NOVO ================= */
+document.getElementById('btnNovo').addEventListener('click', ()=>{
+  if(currentForm.campos.length && !confirm('Descartar o formulário atual e começar um novo?')) return;
+  currentForm = novoFormularioVazio();
+  carregarFormularioNoBuilder();
+});
+
+document.getElementById('btnSalvar').addEventListener('click', salvarFormulario);
+
+async function salvarFormulario(){
+  currentForm.titulo = document.getElementById('formTitulo').value.trim();
+  currentForm.categoria = document.getElementById('formCategoria').value;
+  currentForm.descricao = document.getElementById('formDescricao').value.trim();
+
+  if(!currentForm.titulo){ toast('Dê um título ao formulário antes de salvar.'); return; }
+  if(!currentForm.campos.length){ toast('Adicione pelo menos um campo.'); return; }
+  if(currentForm.campos.some(c=>!c.label.trim())){ toast('Preencha o rótulo de todos os campos.'); return; }
+  if(!CONFIG.API_URL || CONFIG.API_URL==='COLE_AQUI_A_URL_DO_APPS_SCRIPT'){ toast('Configure a conexão com o Apps Script primeiro (botão "Conexão").'); return; }
+
+  if(!currentForm.id) currentForm.id = uuid();
+  if(!currentForm.criadoEm) currentForm.criadoEm = new Date().toISOString();
+
+  const btn = document.getElementById('btnSalvar');
+  btn.disabled = true; btn.textContent = 'Salvando...';
+  try{
+    const resp = await apiPost({action:'saveForm', form: currentForm});
+    if(resp.success){
+      toast('Formulário salvo!');
+      mostrarLinkCompartilhamento(currentForm.id, currentForm.titulo);
+    } else {
+      toast('Erro ao salvar: ' + (resp.error||'desconhecido'));
+    }
+  } catch(err){
+    toast('Falha de conexão. Verifique a URL do Apps Script.');
+    console.error(err);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Salvar formulário';
+  }
+}
+
+function linkDoFormulario(id){
+  const base = location.origin + location.pathname;
+  return base + '?form=' + id;
+}
+
+function mostrarLinkCompartilhamento(id, titulo){
+  const link = linkDoFormulario(id);
+  const local = location.protocol === 'file:';
+  const bg = document.createElement('div');
+  bg.className = 'modal-bg';
+  bg.innerHTML = `
+    <div class="modal">
+      <h3>Formulário pronto</h3>
+      <p>Compartilhe este link com quem vai responder "${titulo}". Funciona bem no celular.</p>
+      ${local ? '<div class="banner">Este link só vai funcionar em outros dispositivos depois que você hospedar este arquivo (ex.: GitHub Pages). Agora ele só abre no seu computador.</div>' : ''}
+      <div class="link-box">
+        <input type="text" readonly value="${link}" id="shareLinkInput">
+        <button class="btn btn-teal btn-sm" id="btnCopyLink">Copiar</button>
+      </div>
+      <div class="actions" style="margin-top:18px;">
+        <button class="btn btn-ghost" id="btnFecharModal">Fechar</button>
+      </div>
+    </div>`;
+  document.body.appendChild(bg);
+  bg.querySelector('#btnCopyLink').addEventListener('click', ()=>{
+    bg.querySelector('#shareLinkInput').select();
+    navigator.clipboard.writeText(link).then(()=>toast('Link copiado!'));
+  });
+  bg.querySelector('#btnFecharModal').addEventListener('click', ()=> bg.remove());
+}
+
+function carregarFormularioNoBuilder(){
+  document.getElementById('formTitulo').value = currentForm.titulo;
+  document.getElementById('formCategoria').value = currentForm.categoria;
+  document.getElementById('formDescricao').value = currentForm.descricao;
+  renderFields();
+}
+
+/* ================= LISTA DE FORMULÁRIOS ================= */
+async function carregarLista(){
+  const el = document.getElementById('listContainer');
+  if(!CONFIG.API_URL || CONFIG.API_URL==='COLE_AQUI_A_URL_DO_APPS_SCRIPT'){
+    el.innerHTML = `<div class="empty"><div class="big">Conexão não configurada</div>Clique em "Conexão" no topo e cole a URL do seu Apps Script.</div>`;
+    return;
+  }
+  el.innerHTML = `<div class="empty">Carregando...</div>`;
+  try{
+    formsCache = await apiGet({action:'list'});
+    if(!Array.isArray(formsCache) || !formsCache.length){
+      el.innerHTML = `<div class="empty"><div class="big">Nenhum formulário ainda</div>Crie o primeiro na aba "Construtor".</div>`;
+      return;
+    }
+    formsCache.sort((a,b)=> (b.criadoEm||'').localeCompare(a.criadoEm||''));
+    el.innerHTML = formsCache.map(f => `
+      <div class="list-item">
+        <div class="meta">
+          <div class="title">${escapeHtml(f.titulo)} <span class="status-pill ${f.ativo? 'ativo':'inativo'}">${f.ativo? 'Ativo':'Inativo'}</span></div>
+          <div class="desc">${escapeHtml(f.categoria||'')} · ${(f.campos||[]).length} campos</div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-ghost btn-sm" data-act="link" data-id="${f.id}">Link</button>
+          <button class="btn btn-ghost btn-sm" data-act="editar" data-id="${f.id}">Editar</button>
+          <button class="btn btn-ghost btn-sm" data-act="respostas" data-id="${f.id}">Respostas</button>
+          <button class="btn btn-ghost btn-sm" data-act="ativar" data-id="${f.id}">${f.ativo?'Desativar':'Ativar'}</button>
+        </div>
+      </div>`).join('');
+  } catch(err){
+    el.innerHTML = `<div class="empty">Não foi possível carregar. Verifique a conexão.</div>`;
+    console.error(err);
+  }
+}
+
+document.getElementById('listContainer').addEventListener('click', async e=>{
+  const btn = e.target.closest('button[data-act]');
+  if(!btn) return;
+  const id = btn.dataset.id;
+  const form = formsCache.find(f=>f.id===id);
+  if(btn.dataset.act === 'link'){
+    mostrarLinkCompartilhamento(id, form.titulo);
+  } else if(btn.dataset.act === 'editar'){
+    currentForm = JSON.parse(JSON.stringify(form));
+    carregarFormularioNoBuilder();
+    document.querySelector('#mainTabs button[data-tab="builder"]').click();
+  } else if(btn.dataset.act === 'respostas'){
+    abrirRespostas(form);
+  } else if(btn.dataset.act === 'ativar'){
+    form.ativo = !form.ativo;
+    await apiPost({action:'saveForm', form});
+    toast(form.ativo ? 'Formulário ativado.' : 'Formulário desativado.');
+    carregarLista();
+  }
+});
+
+/* ================= RESPOSTAS ================= */
+async function abrirRespostas(form){
+  document.getElementById('viewBuilder').hidden = true;
+  document.getElementById('viewList').hidden = true;
+  document.getElementById('viewResponses').hidden = false;
+  document.getElementById('respFormTitle').textContent = form.titulo;
+  document.getElementById('respCount').textContent = 'Carregando respostas...';
+  const wrap = document.getElementById('respTableWrap');
+  wrap.innerHTML = '';
+  try{
+    const data = await apiGet({action:'responses', id: form.id});
+    const rows = data.rows || [];
+    const headers = data.headers || [];
+    document.getElementById('respCount').textContent = rows.length + (rows.length===1?' resposta':' respostas') + ' · também disponível na aba "'+ (form.abaRespostas||'Respostas') +'" da sua planilha';
+    if(!rows.length){
+      wrap.innerHTML = `<div class="empty">Ainda não há respostas para este formulário.</div>`;
+      return;
+    }
+    let html = '<table class="resp-table"><thead><tr>' + headers.map(h=>`<th>${escapeHtml(h)}</th>`).join('') + '</tr></thead><tbody>';
+    rows.forEach(r=>{
+      html += '<tr>' + r.map(v=>`<td>${escapeHtml(v==null?'':String(v))}</td>`).join('') + '</tr>';
+    });
+    html += '</tbody></table>';
+    wrap.innerHTML = html;
+  } catch(err){
+    wrap.innerHTML = `<div class="empty">Erro ao carregar respostas.</div>`;
+    console.error(err);
+  }
+}
+document.getElementById('btnVoltarLista').addEventListener('click', ()=>{
+  document.getElementById('viewResponses').hidden = true;
+  document.getElementById('viewList').hidden = false;
+});
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+/* ================= TELA PÚBLICA DE PREENCHIMENTO ================= */
+async function initFillView(formId){
+  document.querySelector('nav.tabs').hidden = true;
+  document.getElementById('viewBuilder').hidden = true;
+  document.getElementById('viewList').hidden = true;
+  const fillView = document.getElementById('fillView');
+  fillView.hidden = false;
+  const card = document.getElementById('fillCard');
+  card.innerHTML = 'Carregando formulário...';
+
+  if(!CONFIG.API_URL || CONFIG.API_URL==='COLE_AQUI_A_URL_DO_APPS_SCRIPT'){
+    card.innerHTML = '<div class="banner">Este formulário ainda não está conectado. Peça ao administrador para configurar a conexão.</div>';
+    return;
+  }
+  let form;
+  try{
+    form = await apiGet({action:'get', id: formId});
+  }catch(err){
+    card.innerHTML = '<div class="banner">Não foi possível carregar o formulário. Verifique sua conexão com a internet.</div>';
+    return;
+  }
+  if(!form || form.error || !form.id){
+    card.innerHTML = '<div class="banner">Formulário não encontrado.</div>';
+    return;
+  }
+  if(!form.ativo){
+    card.innerHTML = `<div class="banner">Este formulário não está mais recebendo respostas.</div>`;
+    return;
+  }
+
+  const respostas = {};
+  card.innerHTML = `
+    <div class="form-title">${escapeHtml(form.titulo)}</div>
+    ${form.descricao? `<div class="form-desc">${escapeHtml(form.descricao)}</div>` : ''}
+    <div id="qBlocks"></div>
+    <button class="btn btn-primary" id="btnEnviar">Enviar respostas</button>
+  `;
+  const qBlocks = document.getElementById('qBlocks');
+  form.campos.forEach(campo=>{
+    qBlocks.appendChild(buildQuestionBlock(campo, respostas));
+  });
+
+  document.getElementById('btnEnviar').addEventListener('click', async ()=>{
+    const faltando = form.campos.filter(c=>c.obrigatorio && (respostas[c.id]===undefined || respostas[c.id]==='' || (Array.isArray(respostas[c.id])&&!respostas[c.id].length)));
+    if(faltando.length){
+      toast('Responda: ' + faltando[0].label);
+      return;
+    }
+    const btn = document.getElementById('btnEnviar');
+    btn.disabled = true; btn.textContent = 'Enviando...';
+    const respostasOrdenadas = form.campos.map(c => ({id:c.id, label:c.label, valor: respostas[c.id]}));
+    try{
+      const resp = await apiPost({action:'submitResponse', formId: form.id, formTitle: form.titulo, respostas: respostasOrdenadas});
+      if(resp.success){
+        card.innerHTML = `<div class="success-box"><div class="check">✓</div><div style="font-weight:700;font-size:16px;">Respostas enviadas!</div><div style="color:var(--text-muted);font-size:13.5px;margin-top:6px;">Obrigado por preencher "${escapeHtml(form.titulo)}".</div></div>`;
+      } else {
+        toast('Erro ao enviar. Tente novamente.');
+        btn.disabled = false; btn.textContent = 'Enviar respostas';
+      }
+    }catch(err){
+      toast('Falha de conexão. Tente novamente.');
+      btn.disabled = false; btn.textContent = 'Enviar respostas';
+    }
+  });
+}
+
+function buildQuestionBlock(campo, respostas){
+  const div = document.createElement('div');
+  div.className = 'q-block';
+  const labelHtml = `<label class="qlabel">${escapeHtml(campo.label)}${campo.obrigatorio?'<span class="req">*</span>':''}</label>`;
+
+  if(campo.tipo === 'texto_curto'){
+    div.innerHTML = labelHtml + `<input type="text">`;
+    div.querySelector('input').addEventListener('input', e=> respostas[campo.id]=e.target.value);
+  } else if(campo.tipo === 'texto_longo'){
+    div.innerHTML = labelHtml + `<textarea></textarea>`;
+    div.querySelector('textarea').addEventListener('input', e=> respostas[campo.id]=e.target.value);
+  } else if(campo.tipo === 'numero'){
+    div.innerHTML = labelHtml + `<input type="number">`;
+    div.querySelector('input').addEventListener('input', e=> respostas[campo.id]=e.target.value);
+  } else if(campo.tipo === 'data'){
+    div.innerHTML = labelHtml + `<input type="date">`;
+    div.querySelector('input').addEventListener('input', e=> respostas[campo.id]=e.target.value);
+  } else if(campo.tipo === 'select'){
+    div.innerHTML = labelHtml + `<select><option value="">Selecione...</option>${campo.opcoes.map(o=>`<option value="${escapeHtml(o)}">${escapeHtml(o)}</option>`).join('')}</select>`;
+    div.querySelector('select').addEventListener('change', e=> respostas[campo.id]=e.target.value);
+  } else if(campo.tipo === 'radio'){
+    div.innerHTML = labelHtml + campo.opcoes.map((o,i)=>`
+      <div class="choice-row">
+        <input type="radio" name="f_${campo.id}" id="f_${campo.id}_${i}" value="${escapeHtml(o)}">
+        <label for="f_${campo.id}_${i}">${escapeHtml(o)}</label>
+      </div>`).join('');
+    div.querySelectorAll('input').forEach(inp=> inp.addEventListener('change', e=> respostas[campo.id]=e.target.value));
+  } else if(campo.tipo === 'checkbox'){
+    respostas[campo.id] = [];
+    div.innerHTML = labelHtml + campo.opcoes.map((o,i)=>`
+      <div class="choice-row">
+        <input type="checkbox" id="f_${campo.id}_${i}" value="${escapeHtml(o)}">
+        <label for="f_${campo.id}_${i}">${escapeHtml(o)}</label>
+      </div>`).join('');
+    div.querySelectorAll('input').forEach(inp=> inp.addEventListener('change', ()=>{
+      const checked = [...div.querySelectorAll('input:checked')].map(i=>i.value);
+      respostas[campo.id] = checked;
+    }));
+  } else if(campo.tipo === 'escala'){
+    const min = campo.escalaMin ?? 1, max = campo.escalaMax ?? 5;
+    let opts = '';
+    for(let v=min; v<=max; v++) opts += `<div class="scale-opt" data-v="${v}">${v}</div>`;
+    div.innerHTML = labelHtml + `<div class="scale-row">${opts}</div>
+      <div class="scale-labels"><span>${escapeHtml(campo.escalaLabelMin||'')}</span><span>${escapeHtml(campo.escalaLabelMax||'')}</span></div>`;
+    div.querySelectorAll('.scale-opt').forEach(el=> el.addEventListener('click', ()=>{
+      div.querySelectorAll('.scale-opt').forEach(o=>o.classList.remove('selected'));
+      el.classList.add('selected');
+      respostas[campo.id] = el.dataset.v;
+    }));
+  }
+  return div;
+}
+
+/* ================= INICIALIZAÇÃO ================= */
+(function init(){
+  renderPalette();
+  carregarFormularioNoBuilder();
+  if(location.protocol === 'file:'){
+    const w = document.getElementById('hostWarning');
+    if(w) w.hidden = false;
+  }
+  const params = new URLSearchParams(location.search);
+  const fillId = params.get('form');
+  if(fillId){
+    initFillView(fillId);
+  }
+})();
+</script>
+</body>
+</html>
